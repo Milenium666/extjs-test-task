@@ -12,7 +12,6 @@ Ext.define('App.view.Main', {
         region: 'north',
         xtype: 'panel',
         title: 'Главное окно',
-        height: 0,
         style: {
             background: '#007acc',
             color: 'white'
