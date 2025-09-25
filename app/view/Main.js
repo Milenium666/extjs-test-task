@@ -91,7 +91,7 @@ Ext.define('App.view.Main', {
                                 width: 90,
                                 renderer: function (value) {
                                     if (value <= 0) {
-                                        return '<div style="background-color: red; color: black; padding: 4px; width: 100%; height: 100%;">' + value + '</div>';
+                                        return '<div style="background: #ff0000 !important; color: black !important; font-weight: bold !important; padding: 4px; margin: -2px; width: calc(100% + 4px); height: calc(100% + 4px); box-sizing: border-box;">' + value + '</div>';
                                     }
                                     return value;
                                 }
@@ -103,8 +103,17 @@ Ext.define('App.view.Main', {
                             items: [filterIdField, filterDescField]
                         }],
                         listeners: {
-                            itemclick: function (view, record) {
-                                Ext.create('App.view.ProductCard').show(record);
+                            itemclick: function (view, record, item, index, e, eOpts) {
+                                var cell = e.getTarget('.x-grid-cell');
+                                if (!cell) return;
+
+                                var cellIndex = cell.cellIndex;
+                                var column = view.getGridColumns()[cellIndex];
+
+                                if (column && column.dataIndex === 'name') {
+                                    var card = Ext.create('App.view.ProductCard');
+                                    card.show(record);
+                                }
                             }
                         }
                     });
