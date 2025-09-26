@@ -2,7 +2,7 @@ Ext.define('App.view.Main', {
     extend: 'Ext.container.Viewport',
     layout: 'border',
 
-        requires: [
+    requires: [
         'App.store.Products',
         'App.model.Product',
         'App.view.ProductCard'
@@ -118,14 +118,22 @@ Ext.define('App.view.Main', {
                         }
                     });
 
-                    tabPanel.add({
+                    var newTab = tabPanel.add({
                         title: 'Товары',
                         layout: 'fit',
                         closable: true,
                         items: [grid]
                     });
 
-                    tabPanel.setActiveTab(tabPanel.items.length - 1);
+                    tabPanel.setActiveTab(newTab);
+                    try { localStorage.setItem('app.activeTabTitle', newTab.title); } catch(e) {}
+
+                    if (!tabPanel._hasPersistListener) {
+                        tabPanel.on('tabchange', function(tp, newCard) {
+                            try { localStorage.setItem('app.activeTabTitle', newCard && newCard.title || ''); } catch(e) {}
+                        });
+                        tabPanel._hasPersistListener = true;
+                    }
                 }
             },
             {
@@ -137,6 +145,11 @@ Ext.define('App.view.Main', {
                     if (vp) {
                         vp.destroy();
                     }
+
+                    try {
+                        localStorage.removeItem('app.loggedIn');
+                        localStorage.removeItem('app.activeTabTitle');
+                    } catch(e) {}
 
                     var login = Ext.create('App.view.Login');
 
@@ -158,5 +171,33 @@ Ext.define('App.view.Main', {
         style: {
             background: '#f0f0f0'
         }
-    }]
+    }],
+
+    listeners: {
+        afterrender: function(vp) {
+            try {
+                var activeTitle = localStorage.getItem('app.activeTabTitle');
+                if (activeTitle) {
+                    var westToolbar = vp.down('toolbar');
+                    if (westToolbar) {
+                        var btn = westToolbar.query('button[text=Товары]')[0];
+                        if (btn && btn.handler) {
+                            btn.handler.call(btn);
+
+                            Ext.defer(function() {
+                                var tp = Ext.ComponentQuery.query('tabpanel[region=center]')[0];
+                                if (tp) {
+                                    var found = tp.items.findBy(function(item) { return item && item.title === activeTitle; });
+                                    if (found) {
+                                        tp.setActiveTab(found);
+                                    }
+                                }
+                            }, 200);
+                        }
+                    }
+                }
+            } catch (e) {
+            }
+        }
+    }
 });

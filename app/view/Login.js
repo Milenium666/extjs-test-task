@@ -34,6 +34,8 @@ Ext.define('App.view.Login', {
                 if (form.isValid()) {
                     var v = form.getValues();
                     if (v.login === 'admin' && v.password === 'padmin') {
+                        try { localStorage.setItem('app.loggedIn', 'true'); } catch(e) {}
+
                         this.up('window').close();
                         Ext.create('App.view.Main');
                     } else {
