@@ -1,15 +1,9 @@
 Ext.Loader.setConfig({
-    enabled: true,
-    paths: {
-        'App': './app'
-    }
+    enabled: false
 });
 
-Ext.application({
-    name: 'App',
-    appFolder: './app',
-    controllers: [],
-    launch: function() {
-        Ext.create('App.view.Main');
-    }
+
+Ext.onReady(function() {
+    console.log('Ext ready, creating Login');
+    Ext.create('App.view.Login').show();
 });

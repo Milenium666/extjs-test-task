@@ -2,7 +2,7 @@ Ext.define('App.view.Main', {
     extend: 'Ext.container.Viewport',
     layout: 'border',
 
-    requires: [
+        requires: [
         'App.store.Products',
         'App.model.Product',
         'App.view.ProductCard'
