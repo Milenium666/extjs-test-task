@@ -133,8 +133,22 @@ Ext.define('App.view.Main', {
                 width: '100%',
                 margin: '10 0 0 0',
                 handler: function () {
-                    Ext.ComponentQuery.query('viewport')[0].removeAll();
-                    Ext.create('App.view.Login');
+                    var vp = Ext.ComponentQuery.query('viewport')[0];
+                    if (vp) {
+                        vp.destroy();
+                    }
+
+                    var login = Ext.create('App.view.Login');
+
+                    if (login) {
+                        var form = login.down && login.down('form');
+                        if (form && form.getForm) {
+                            form.getForm().reset();
+                        }
+                        if (typeof login.show === 'function') {
+                            login.show();
+                        }
+                    }
                 }
             }
         ]
